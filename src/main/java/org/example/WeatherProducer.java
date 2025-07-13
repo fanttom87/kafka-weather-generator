@@ -18,7 +18,7 @@ public class WeatherProducer {
 
     static long currentDay = 0;
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         Map<String, Object> config = new HashMap<>();
         config.put("bootstrap.servers", "localhost:9092");
         config.put("key.serializer", StringSerializer.class.getName());
@@ -37,7 +37,7 @@ public class WeatherProducer {
                 int temperature = random.nextInt(36);
                 String weather = weatherList[random.nextInt(weatherList.length)];
 
-                String date = "2025-04-" + String.format("%02d", (currentDay % 30) + 1);
+                String date = "2025-11-" + String.format("%02d", (currentDay % 30) + 1);
 
                 Map<String, Object> data = new HashMap<>();
                 data.put("city", city);

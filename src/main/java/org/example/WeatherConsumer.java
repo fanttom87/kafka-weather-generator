@@ -13,13 +13,16 @@ public class WeatherConsumer {
     public static void main(String[] args) {
         Map<String, Object> config = new HashMap<>();
         config.put("bootstrap.servers", "localhost:9092");
-        config.put("group.id", "weather-group-" + System.currentTimeMillis());
+        config.put("group.id", "weather-group");
         config.put("key.deserializer", StringDeserializer.class.getName());
         config.put("value.deserializer", StringDeserializer.class.getName());
         config.put("auto.offset.reset", "earliest");
 
         Consumer<String, String> consumer = new KafkaConsumer<>(config);
+
         ObjectMapper mapper = new ObjectMapper();
+
+        WeatherAnalytics analytics = new WeatherAnalytics();
 
         consumer.subscribe(Collections.singletonList("weather-topic"));
 
@@ -30,13 +33,14 @@ public class WeatherConsumer {
                     Map<String, Object> data = mapper.readValue(record.value(), new TypeReference<>() {
                     });
 
-                    String city = (String) data.get("city");
-                    int temperature = (Integer) data.get("temperature");
-                    String condition = (String) data.get("condition");
-                    String date = (String) data.get("date");
+                    WeatherData weather = new WeatherData();
+                    weather.city = (String) data.get("city");
+                    weather.temperature = ((Integer) data.get("temperature"));
+                    weather.condition = (String) data.get("condition");
+                    weather.date = (String) data.get("date");
 
-                    System.out.printf("Получено: [%s] %s | Температура: %d°C | Погода: %s%n",
-                            date, city, temperature, condition);
+                    analytics.addData(weather);
+                    analytics.printAnalytics();
 
                 } catch (Exception e) {
                     System.err.println("Ошибка при парсинге JSON: " + record.value());
