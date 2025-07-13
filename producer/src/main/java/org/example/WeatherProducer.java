@@ -20,7 +20,7 @@ public class WeatherProducer {
 
     public static void main(String[] args) {
         Map<String, Object> config = new HashMap<>();
-        config.put("bootstrap.servers", "localhost:9092");
+        config.put("bootstrap.servers", "kafka:9093");
         config.put("key.serializer", StringSerializer.class.getName());
         config.put("value.serializer", StringSerializer.class.getName());
 
